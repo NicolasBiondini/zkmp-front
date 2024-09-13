@@ -10,9 +10,14 @@ import {
 import { useDropzone } from "react-dropzone";
 import { Button } from "./ui/button";
 
-type Props = { children: JSX.Element };
+type Props = {
+  children: JSX.Element;
+  sendProof: (id: number, amount: number) => void;
+  id: number;
+  amount: number;
+};
 
-const BuyModal = ({ children }: Props) => {
+const BuyModal = ({ children, sendProof, id, amount }: Props) => {
   const [file, setFile] = useState<File | null>(null);
 
   const onDrop = (acceptedFiles: File[]) => {
@@ -44,8 +49,12 @@ const BuyModal = ({ children }: Props) => {
             <div className="w-full h-full flex justify-center items-center flex-col gap-3">
               {" "}
               <h1>Email selected! 🎉</h1>
-              <Button className="w-full" variant={"secondary"}>
-                Generate proof 🔏
+              <Button
+                onClick={() => sendProof(id, amount)}
+                className="w-full"
+                variant={"secondary"}
+              >
+                Generate proof 🔏 + Withdraw 🤑
               </Button>
             </div>
           ) : (

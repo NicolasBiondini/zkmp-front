@@ -105,8 +105,78 @@ function App() {
         functionName: "escrows",
         args: [11],
       },
+      {
+        address: CONTRACT,
+        abi: ABICONTRACT,
+        functionName: "escrows",
+        args: [12],
+      },
+      {
+        address: CONTRACT,
+        abi: ABICONTRACT,
+        functionName: "escrows",
+        args: [13],
+      },
+      {
+        address: CONTRACT,
+        abi: ABICONTRACT,
+        functionName: "escrows",
+        args: [14],
+      },
+      {
+        address: CONTRACT,
+        abi: ABICONTRACT,
+        functionName: "escrows",
+        args: [15],
+      },
+      {
+        address: CONTRACT,
+        abi: ABICONTRACT,
+        functionName: "escrows",
+        args: [16],
+      },
+      {
+        address: CONTRACT,
+        abi: ABICONTRACT,
+        functionName: "escrows",
+        args: [17],
+      },
+      {
+        address: CONTRACT,
+        abi: ABICONTRACT,
+        functionName: "escrows",
+        args: [18],
+      },
+      {
+        address: CONTRACT,
+        abi: ABICONTRACT,
+        functionName: "escrows",
+        args: [19],
+      },
     ],
   });
+
+  const proof = [
+    [
+      "0x09862e9ac4a039d4f63ce3585399357a3a77e667439fbe79056f5f953e9938c8",
+      "0x14521c34994d4d6ceed9b833a2b9c5321ac2c9840720af6441e9c4ba7ccc7f39",
+    ],
+    [
+      [
+        "0x27ba1b55242b61c7ae4b2deb1396a3560fdcaeacfc9e3ae6e574bd8a9b0f6756",
+        "0x3030cc30102d1f39fdf967c11adbf3c6925c200ef6e575d015e3493bdda63578",
+      ],
+      [
+        "0x0b3e95933d50f69174c133136b89ffc58b353ab8b6f212cd619ac123121d9b66",
+        "0x21296dd37df24576b40694e661839d035b138bbea91bfcb6a1ba856305abd958",
+      ],
+    ],
+    [
+      "0x26ef123e5b6502ad950946ff999d228eaeb6dea5b8b89867c77a576128507caa",
+      "0x0085afda6cfcf7bbb1aa993f45a4d730efed19dc7116df8cff9d0d7a3c3ebafa",
+    ],
+  ];
+
   const approvalScrow = async () => {
     const amountInWei = ethers.parseUnits(sellForm.amount.toString(), 6); // 18 es el número de decimales típico para un token ERC20, ajusta según corresponda
 
@@ -176,7 +246,7 @@ function App() {
           onSuccess: (data, variables, context) => {
             setTx(undefined);
             console.log("ok: ", data, variables, context);
-            alert("SCROW CREATED! 🎉");
+            alert("ESCROW CREATED! 🎉");
           },
         }
       );
@@ -187,14 +257,46 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    console.log("escroess:", scrowList.data);
-  });
+  const sendProof = (id: number, amount: number) => {
+    if (!address) return;
+    try {
+      // if (!contract) return console.log("No contract.");
+      // // Convertir `amount` a formato compatible con el token (asegúrate de que sea en "wei")
+      const amountInWei = ethers.parseUnits(amount.toString(), 6); // 18 es el número de decimales típico para un token ERC20, ajusta según corresponda
+
+      // // Llamar a la función del contrato
+      // const tx = await contract.createEscrow(USDC, amountInWei, sellForm.cvu);
+
+      // // Esperar a que la transacción se confirme
+      // const receipt = await tx.wait();
+
+      writeContract(
+        {
+          abi: ABICONTRACT,
+          address: CONTRACT,
+          functionName: "withdraw",
+          args: [id, amountInWei, proof[0], proof[1], proof[2]],
+        },
+        {
+          onError: (e) => console.log("error: ", e),
+          onSuccess: (data, variables, context) => {
+            setTx(undefined);
+            console.log("ok: ", data, variables, context);
+            alert("Withdraw! 🎉");
+          },
+        }
+      );
+
+      console.log("Transacción confirmada: ");
+    } catch (error) {
+      console.error("Error al crear el escrow: ", error);
+    }
+  };
 
   return (
     <main className="w-full h-full min-h-screen justify-start items-center flex flex-col bg-background dark relative text-foreground">
       <nav className="flex w-full justify-between px-4 lg:px-0 max-w-[1024px] items-center sticky h-[90px]">
-        <h1 className="font-bold text-xl text-foreground">✊ zkMP</h1>
+        <h1 className="font-bold text-xl text-foreground">✊ 10GO</h1>
         <div className="flex gap-2 items-center justify-center">
           {isConnected && (
             <div className="flex justify-center gap-1 items-center">
@@ -223,7 +325,7 @@ function App() {
           <ConnectButton />
         </div>
       </nav>
-      <div className="flex w-full h-full max-w-[1024px] ">
+      <div className="flex w-full h-full max-w-[1024px] px-4 ">
         <Tabs defaultValue="buy" className="w-full h-full">
           <TabsList className="w-full">
             <TabsTrigger className="w-full" value="buy">
@@ -234,21 +336,22 @@ function App() {
             </TabsTrigger>
           </TabsList>
           <TabsContent
-            className="flex flex-col gap-4 w-full h-full"
+            className="flex flex-col gap-4 w-full h-full "
             value="buy"
           >
             <h1 className="text-2xl font-bold w-full mt-3">Buy USDC</h1>
 
             {scrowList.data?.map((escrow, index) => {
               const data = escrow.result as string[];
+              if (Number(data[1].toString()) / 1000000 === 0) return;
               if (data[2] === "0x0000000000000000000000000000000000000000")
                 return;
               return (
                 <Card className="py-3" key={index + "escrowitem"}>
                   <CardContent className="flex pb-0 flex-col gap-1">
                     <div className="flex gap-1">
-                      <p className="font-bold">Account: </p>
-                      <p>{data[2]}</p>
+                      <p className="font-bold ">Account: </p>
+                      <p className="truncate">{data[2]}</p>
                     </div>
                     <div className="flex gap-1">
                       <p className="font-bold">CVU: </p>
@@ -283,7 +386,11 @@ function App() {
                         {(Number(data[1].toString()) / 1000000) * USDPRICE} ARS$
                       </p>
                     </div>
-                    <BuyModal>
+                    <BuyModal
+                      sendProof={sendProof}
+                      id={index + 1}
+                      amount={Number(data[1].toString()) / 1000000}
+                    >
                       <Button className="w-full" disabled={!address}>
                         Buy USCD!
                       </Button>
