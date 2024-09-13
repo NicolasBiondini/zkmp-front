@@ -344,6 +344,7 @@ function App() {
             {scrowList.data?.map((escrow, index) => {
               const data = escrow.result as string[];
               if (Number(data[1].toString()) / 1000000 === 0) return;
+              if (data[3] === "testcvu" || data[3] === "test2") return;
               if (data[2] === "0x0000000000000000000000000000000000000000")
                 return;
               return (
