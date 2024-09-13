@@ -434,16 +434,12 @@ function App() {
               />
               <Button
                 disabled={
-                  !sellForm.cvu ||
-                  !address ||
-                  !sellForm.amount ||
-                  !balance ||
-                  balance < sellForm.amount
+                  !sellForm.cvu || !address || !sellForm.amount || !balance
                 }
                 type="submit"
                 className="w-full"
               >
-                {!tx && !isConfirmed ? "Approve first" : "Create scrow!"}
+                {!tx && !isConfirmed ? "Approve first" : "Create escrow!"}
               </Button>
             </form>
           </TabsContent>
